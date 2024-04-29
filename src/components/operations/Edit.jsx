@@ -34,7 +34,7 @@ export default function Edit() {
             }
         };
         fetchData();
-    }, [id]);
+    }, []);
 
     // Function to handle form submission
     const handleSubmit = async (event) => {

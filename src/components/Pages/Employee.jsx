@@ -2,9 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+import View from "../operations/View";
+
 const Employee = () => {
 
   const [Users, SetUsers] = useState([]);
+  const [toggle, settoggle] = useState(false);
+  const [viewid, setviewid] = useState(null);
 
   useEffect(() => {
     axios.get("http://localhost:8080/user")
@@ -21,6 +25,17 @@ const Employee = () => {
       alert('Error deleting user. Please check console for details.');
     }
   };
+
+  const handleEdit = (id) => {
+    setviewid(id);
+    settoggle(true);
+  };
+
+  const handleCloseUpdate = () => {
+    setviewid(null);
+    settoggle(false);
+  };
+
 
 
   const TableRows = ({ data }) => {
@@ -53,7 +68,15 @@ const Employee = () => {
           <td
             className={`py-2 px-3 font-normal text-base border-t whitespace-nowrap`}
           >
-            {data?.id}
+            {!toggle && (
+              <button
+                onClick={() => handleEdit(data?.id)}
+                className="text-indigo-600 hover:text-indigo-900 mr-1"
+              >
+                {data?.id}
+              </button>
+            )}
+
           </td>
           <td
             className={`py-2 px-3 font-normal text-base border-t whitespace-nowrap`}
@@ -92,7 +115,7 @@ const Employee = () => {
                 <tr>
                   <td className="bg-gray-200 py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Name:</td>
                   <td className="bg-gray-100 py-3 px-4 border border-gray-300">
-                    {"$ "+`${data.FirstName.charAt(0).toUpperCase()}. ${data.LastName.toUpperCase()}`}
+                    {"$ " + `${data.FirstName.charAt(0).toUpperCase()}. ${data.LastName.toUpperCase()}`}
                   </td>
                 </tr>
                 <tr>
@@ -112,8 +135,9 @@ const Employee = () => {
                 <tr>
                   <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Salary:</td>
                   <td className="bg-gray-100  py-3 px-4 text-center border border-gray-300">
-                    {"$ " + (data.Age > 40 ? data.Age * 10 + 50.000 : data.Age * 5 + 50.000)}
+                    {"$ " + (parseInt(data.Age) > 40 ? parseInt(data.Age) * 10 + 50.000 : parseInt(data.Age) * 5 + 50.000)}
                   </td>
+
                 </tr>
               </tbody>
             </table>
@@ -167,6 +191,7 @@ const Employee = () => {
               </tr>
             </tbody>
           </table>
+          {toggle && <View id={viewid} onClose={handleCloseUpdate} />}
         </div>
       </div>
     </div>
