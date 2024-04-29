@@ -1,0 +1,12 @@
+{
+    "user" : [
+        {
+            "id": 1,
+            "FirstName":"KOTI",
+            "LastName":"CHOHAN",
+            "Department":"CSE",
+            "Age": 21,
+            "Gender": "Male"
+        }
+    ]
+}
