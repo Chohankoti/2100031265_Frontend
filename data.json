@@ -1,12 +1,20 @@
 {
-    "user" : [
-        {
-            "id": 1,
-            "FirstName":"KOTI",
-            "LastName":"CHOHAN",
-            "Department":"CSE",
-            "Age": 21,
-            "Gender": "Male"
-        }
-    ]
+  "user": [
+    {
+      "FirstName": "KOTI",
+      "LastName": "CHOHAN",
+      "Department": "CSE",
+      "Gender": "Male",
+      "Age": "21",
+      "id": "2ed9"
+    },
+    {
+      "id": "1d56",
+      "FirstName": "KOTI",
+      "LastName": "PRAMEELA",
+      "Department": "CSE",
+      "Gender": "Female",
+      "Age": "45"
+    }
+  ]
 }

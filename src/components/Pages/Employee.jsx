@@ -1,84 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 const Employee = () => {
-  const products = [
-    {
-      id: 1,
-      Category: "Electronics",
-      Company: "Apple",
-      Product: "iPhone 13",
-      Description: "The latest iPhone with advanced features",
-      Price: 999,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "John Doe",
-          Quantity: 2,
-          TotalAmount: 1998,
-        },
-        {
-          Date: "2023-09-04",
-          Customer: "Jane Smith",
-          Quantity: 1,
-          TotalAmount: 999,
-        },
-      ],
-    },
-    {
-      id: 2,
-      Category: "Clothing",
-      Company: "Nike",
-      Product: "Running Shoes",
-      Description: "High-quality running shoes for athletes",
-      Price: 89,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "Alice Johnson",
-          Quantity: 3,
-          TotalAmount: 267,
-        },
-        {
-          Date: "2023-09-03",
-          Customer: "Bob Brown",
-          Quantity: 2,
-          TotalAmount: 178,
-        },
-      ],
-    },
-    {
-      id: 3,
-      Category: "Books",
-      Company: "Penguin Books",
-      Product: "The Great Gatsby",
-      Description: "Classic novel by F. Scott Fitzgerald",
-      Price: 12,
-      CustomDetails: [
-        {
-          Date: "2023-09-02",
-          Customer: "Ella Williams",
-          Quantity: 5,
-          TotalAmount: 60,
-        },
-      ],
-    },
-    {
-      id: 4,
-      Category: "Home Appliances",
-      Company: "Samsung",
-      Product: "Smart Refrigerator",
-      Description: "Refrigerator with smart features and spacious design",
-      Price: 14,
-      CustomDetails: [
-        {
-          Date: "2023-09-05",
-          Customer: "David Wilson",
-          Quantity: 1,
-          TotalAmount: 14,
-        },
-      ],
-    },
-  ];
+
+  const [Users, SetUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/user")
+      .then((response) => SetUsers(response.data))
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:8080/user/${id}`);
+      // Filter out the deleted user from the state
+      SetUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Error deleting user. Please check console for details.');
+    }
+  };
+
+
   const TableRows = ({ data }) => {
     const [open, setOpen] = useState(false);
     return (
@@ -114,34 +58,23 @@ const Employee = () => {
           <td
             className={`py-2 px-3 font-normal text-base border-t whitespace-nowrap`}
           >
-            {data?.Category}
+            {data?.FirstName}
           </td>
           <td
             className={`py-2 px-3 font-normal text-base border-t whitespace-nowrap`}
           >
-            {data?.Company}
+            {data?.LastName}
           </td>
           <td
             className={`py-2 px-3 text-base  font-normal border-t whitespace-nowrap`}
           >
-            {data?.Product}
+            {data?.Department}
           </td>
           <td
             className={`py-2 px-3 text-base  font-normal border-t min-w-[250px]`}
           >
-            {data?.Description}
-          </td>
-          <td
-            className={`py-5 px-3 text-base  font-normal  ${open ? "border-t " : "border-t"
-              }`}
-          >
-            {"$" + data?.Price}
-          </td>
-          <td
-            className={`py-2 px-3 text-base  font-normal border-t min-w-[250px]`}
-          >
-            <Link>Edit</Link>
-            <Link>Delete</Link>
+            <Link to={`../edit/${data.id}`} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mt-2 mr-2">Edit</Link>
+            <button onClick={() => handleDelete(data.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mt-2">Delete</button>
           </td>
         </tr>
         <tr>
@@ -156,28 +89,32 @@ const Employee = () => {
           <td colSpan={10}>
             <table className={`px-10 w-fit ${open ? "block" : "hidden"} mx-auto border-collapse rounded-lg`}>
               <tbody>
-                {data?.CustomDetails?.map((cdata, key) => (
-                  <React.Fragment key={key}>
-                    <tr>
-                      <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Date:</td>
-                      <td className="bg-gray-100  py-3 px-4 border border-gray-300">{cdata?.Date}</td>
-                    </tr>
-                    <tr>
-                      <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Customer:</td>
-                      <td className="bg-gray-100  py-3 px-4 border border-gray-300">{cdata?.Customer}</td>
-                    </tr>
-                    <tr>
-                      <td className=" bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Quantity:</td>
-                      <td className="bg-gray-100 py-3 px-4 text-center border border-gray-300">{cdata?.Quantity}</td>
-                    </tr>
-                    <tr>
-                      <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Total Amount:</td>
-                      <td className="bg-gray-100  py-3 px-4 text-center border border-gray-300">
-                        {"$" + cdata?.TotalAmount}
-                      </td>
-                    </tr>
-                  </React.Fragment>
-                ))}
+                <tr>
+                  <td className="bg-gray-200 py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Name:</td>
+                  <td className="bg-gray-100 py-3 px-4 border border-gray-300">
+                    {"$ "+`${data.FirstName.charAt(0).toUpperCase()}. ${data.LastName.toUpperCase()}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Age:</td>
+                  <td className="bg-gray-100  py-3 px-4 text-center border border-gray-300">{data.Age}</td>
+                </tr>
+                <tr>
+                  <td className=" bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Gender:</td>
+                  <td className="bg-gray-100 py-3 px-4 text-center border border-gray-300">{data.Gender}</td>
+                </tr>
+                <tr>
+                  <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Position:</td>
+                  <td className="bg-gray-100  py-3 px-4 text-center border border-gray-300">
+                    {data.Age > 40 ? "Senior" : "Junior"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="bg-gray-200  py-3 px-4 text-[#212B36] text-base sm:text-sm font-normal whitespace-nowrap border border-gray-300">Salary:</td>
+                  <td className="bg-gray-100  py-3 px-4 text-center border border-gray-300">
+                    {"$ " + (data.Age > 40 ? data.Age * 10 + 50.000 : data.Age * 5 + 50.000)}
+                  </td>
+                </tr>
               </tbody>
             </table>
 
@@ -189,7 +126,16 @@ const Employee = () => {
   return (
     <div className="bg-white flex flex-col items-center justify-center py-10 ">
       <div className="w-full max-w-4xl px-2">
-        <h1 className="text-2xl font-medium">Tailwind Nested Table</h1>
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <h1 className="text-2xl font-medium">Employee Table</h1>
+          </div>
+          <div>
+            <Link to='../add' className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2">Add</Link>
+          </div>
+        </div>
+
+
         <div className="w-full overflow-x-scroll md:overflow-auto  max-w-7xl 2xl:max-w-none mt-2">
           <table className="table-auto overflow-scroll md:overflow-auto w-full text-left font-inter border-separate border-spacing-y-0 borer ">
             <thead className="bg-[#222E3A]/[6%] rounded-lg text-base text-white font-semibold w-full">
@@ -199,19 +145,13 @@ const Employee = () => {
                   Id
                 </th>
                 <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
-                  Category
+                  First Name
                 </th>
                 <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
-                  Company
+                  Last Name
                 </th>
                 <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
-                  Product
-                </th>
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap">
-                  Description
-                </th>
-                <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap  ">
-                  Price
+                  Department
                 </th>
                 <th className="py-3 px-3 text-[#212B36] sm:text-base font-bold whitespace-nowrap  ">
                   Actions
@@ -219,7 +159,7 @@ const Employee = () => {
               </tr>
             </thead>
             <tbody>
-              {products?.map((data, index) => (
+              {Users?.map((data, index) => (
                 <TableRows key={index} data={data} />
               ))}
               <tr>
